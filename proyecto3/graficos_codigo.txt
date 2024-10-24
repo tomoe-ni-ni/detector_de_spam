@@ -1,0 +1,101 @@
+# Paso 1: Instalar el paquete 'neuralnet' si no está instalado
+if (!require(neuralnet)) {
+  install.packages("neuralnet", dependencies = TRUE)
+}
+
+# Cargar el paquete
+library(neuralnet)
+
+# Paso 2: Cargar los datos del CSV
+data <- read.csv("/cloud/project/asunto.csv")
+
+# Ver los primeros registros para inspeccionar el dataset
+head(data)
+
+# Paso 3: Convertir las columnas de texto ("asunto" y "cuerpo") a factores numéricos
+data$asunto <- as.numeric(factor(data$asunto))   # Convertir 'asunto' a numérico
+data$cuerpo <- as.numeric(factor(data$cuerpo))   # Convertir 'cuerpo' a numérico
+
+# Asegurarse de que 'es_spam' es un factor numérico (0 y 1)
+data$es_spam <- as.numeric(as.factor(data$es_spam))
+
+# Paso 4: Entrenar una red neuronal simple
+# Usaremos 'es_spam' como la variable de salida y 'asunto' y 'cuerpo' como entradas
+set.seed(123)  # Fijar semilla para reproducibilidad
+rn <- neuralnet(es_spam ~ asunto + cuerpo, 
+                data = data, 
+                hidden = c(64, 32),  # Especificar las capas ocultas
+                act.fct = "logistic",  # Función de activación logística
+                linear.output = FALSE)
+
+# Paso 5: Graficar la red neuronal
+plot(rn)
+-----------------------------------------------------------
+# Paso 1: Instalar el paquete 'neuralnet' si no está instalado
+if (!require(neuralnet)) {
+  install.packages("neuralnet", dependencies = TRUE)
+}
+
+# Cargar el paquete
+library(neuralnet)
+
+# Paso 2: Cargar los datos del CSV
+data <- read.csv("/cloud/project/correos.csv")
+
+# Ver los nombres de las columnas
+print(colnames(data))
+
+# Ver los primeros registros para inspeccionar el dataset
+head(data)
+
+# Paso 3: Convertir la columna 'correo' a un formato numérico
+data$correo <- as.numeric(factor(data$correo))   # Convertir 'correo' a numérico
+
+# Asegurarse de que 'es_spam' es un factor numérico (0 y 1)
+data$es_spam <- as.numeric(as.factor(data$es_spam))
+
+# Paso 4: Entrenar una red neuronal simple
+set.seed(123)  # Fijar semilla para reproducibilidad
+rn <- neuralnet(es_spam ~ correo, 
+                data = data, 
+                hidden = c(64),  # Especificar las capas ocultas
+                act.fct = "logistic",  # Función de activación logística
+                linear.output = FALSE)
+
+# Paso 5: Graficar la red neuronal
+plot(rn)
+-----------------------------------------------------
+# Paso 1: Instalar el paquete 'neuralnet' si no está instalado
+if (!require(neuralnet)) {
+  install.packages("neuralnet", dependencies = TRUE)
+}
+
+# Cargar el paquete
+library(neuralnet)
+
+# Paso 2: Cargar los datos del CSV
+data <- read.csv("/cloud/project/links_maliciosos_actualizado (1).csv")
+
+# Ver los nombres de las columnas
+print(colnames(data))
+
+# Ver los primeros registros para inspeccionar el dataset
+head(data)
+
+# Paso 3: Convertir las columnas 'Link_Malicioso' y 'Dominio' a formatos numéricos
+data$Link_Malicioso <- as.numeric(factor(data$Link_Malicioso))   # Convertir 'Link_Malicioso' a numérico
+data$Dominio <- as.numeric(factor(data$Dominio))                 # Convertir 'Dominio' a numérico
+
+# Asegurarse de que 'Malicioso' es un factor numérico (0 y 1)
+data$Malicioso <- as.numeric(as.factor(data$Malicioso))
+
+# Paso 4: Entrenar una red neuronal simple
+set.seed(123)  # Fijar semilla para reproducibilidad
+rn <- neuralnet(Malicioso ~ Link_Malicioso + Dominio, 
+                data = data, 
+                hidden = c(64, 32),  # Especificar las capas ocultas
+                act.fct = "logistic",  # Función de activación logística
+                linear.output = FALSE)
+
+# Paso 5: Graficar la red neuronal
+plot(rn)

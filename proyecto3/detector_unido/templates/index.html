@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de SPAM y Enlaces Maliciosos</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Detector de SPAM y Enlaces Maliciosos</h1>
+        <form action="/predict" method="POST">
+            <label for="tipo">Seleccione el tipo de análisis:</label>
+            <select name="tipo" id="tipo">
+                <option value="nombre">Correo</option>
+                <option value="asunto">Asunto</option>
+                <option value="link">Enlace</option>
+            </select>
+
+            <label for="input_text">Ingrese el texto para analizar:</label>
+            <input type="text" name="input_text" id="input_text" placeholder="Ingrese el nombre, asunto o enlace" required>
+
+            <button type="submit">Analizar</button>
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <h2>Resultado: {{ prediction }}</h2>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

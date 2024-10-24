@@ -1,0 +1,77 @@
+# Instalar los paquetes necesarios
+install.packages("neuralnet")
+
+library(neuralnet)
+
+# Establecer el directorio de trabajo
+setwd("/cloud/project")
+
+# Paso 1: Cargar los datos del CSV
+data <- read.csv("asunto.csv")
+
+# Paso 2: Preprocesar los datos (tomamos la columna "es_spam" como la variable de salida)
+# Usamos las columnas "asunto" y "cuerpo" como variables de entrada
+# Convertimos cualquier texto a formato numérico o lo que desees (ejemplo sencillo)
+data$asunto <- as.numeric(factor(data$asunto))
+data$cuerpo <- as.numeric(factor(data$cuerpo))
+
+# Seleccionar las columnas necesarias para el modelo
+variables <- c("asunto", "cuerpo")
+
+# Paso 3: Entrenar el modelo de red neuronal
+# El modelo toma las columnas de "asunto" y "cuerpo" como variables de entrada
+set.seed(123)
+rn <- neuralnet(es_spam ~ asunto + cuerpo, data = data, hidden = c(64, 34), act.fct = "logistic", linear.output = FALSE)
+
+# Paso 4: Visualizar el gráfico de la red neuronal
+plot(rn)
+----------------------------------------------
+# Instalar los paquetes necesarios
+install.packages("neuralnet")
+
+library(neuralnet)
+
+# Establecer el directorio de trabajo
+setwd("/cloud/project")
+
+# Paso 1: Cargar los datos del CSV
+data <- read.csv("links_maliciosos_actualizado.csv")
+
+# Paso 2: Preprocesar los datos
+# Convertimos las columnas "Link_Malicioso" y "Dominio" a un formato numérico
+data$Link_Malicioso <- as.numeric(factor(data$Link_Malicioso))
+data$Dominio <- as.numeric(factor(data$Dominio))
+
+# Paso 3: Entrenar el modelo de red neuronal con dos capas ocultas (64 y 34 nodos)
+set.seed(123)
+rn <- neuralnet(Malicioso ~ Link_Malicioso + Dominio, 
+                data = data, 
+                hidden = c(64, 34), 
+                act.fct = "logistic", 
+                linear.output = FALSE)
+
+# Paso 4: Visualizar el gráfico de la red neuronal
+plot(rn)
+----------------------------------------------------
+# Instalar los paquetes necesarios
+install.packages("neuralnet")
+
+library(neuralnet)
+
+# Establecer el directorio de trabajo
+setwd("/cloud/project")
+
+# Paso 1: Cargar los datos del CSV
+data <- read.csv("correos.csv", stringsAsFactors = FALSE)
+
+# Paso 2: Preprocesar los datos
+# Convertimos la columna "correo" a un formato numérico para que sea compatible con la red neuronal
+data$correo <- as.numeric(factor(data$correo))
+
+# Paso 3: Entrenar el modelo de red neuronal
+# El modelo toma la columna "correo" como variable de entrada y "es_spam" como variable de salida
+set.seed(123)
+rn <- neuralnet(es_spam ~ correo, data = data, hidden = 64, act.fct = "logistic", linear.output = FALSE)
+
+# Paso 4: Visualizar el gráfico de la red neuronal
+plot(rn)

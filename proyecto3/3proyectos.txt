@@ -1,0 +1,170 @@
+1:PARA DETECTAR ALGUN SPAM DE ASUNTO.
+from flask import Flask, render_template, request
+import os
+import pickle
+import numpy as np
+from tensorflow.keras.models import load_model
+
+app = Flask(__name__)
+
+# Definir el directorio de los archivos guardados
+SAVE_DIR = '/home/danijari1/models/'  # Asegúrate de que este sea el path correcto
+
+# Verificar si el vectorizador existe
+vectorizer_path = os.path.join(SAVE_DIR, 'asunto.pkl')
+if not os.path.exists(vectorizer_path):
+    raise FileNotFoundError(f"El archivo asunto.pkl no fue encontrado en: {vectorizer_path}")
+
+# Cargar el vectorizador desde el archivo .pkl
+with open(vectorizer_path, 'rb') as file:
+    vectorizer = pickle.load(file)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if request.method == 'POST':
+        # Obtener el correo ingresado por el usuario desde el formulario
+        correo = request.form['correo']
+
+        # Convertir el texto del correo a TF-IDF utilizando el vectorizador cargado
+        X_nuevo_tfidf = vectorizer.transform([correo]).toarray()
+
+        # Cargar el modelo solo cuando se realiza una predicción
+        model_path = os.path.join(SAVE_DIR, 'asunto.h5')
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"El archivo asunto.h5 no fue encontrado en: {model_path}")
+        
+        # Cargar el modelo guardado (.h5)
+        model = load_model(model_path)
+
+        # Realizar predicción con el modelo cargado
+        prediccion = model.predict(X_nuevo_tfidf)
+
+        # Interpretar el resultado
+        if prediccion[0][0] >= 0.5:
+            resultado = "El correo es SPAM"
+        else:
+            resultado = "El correo NO es SPAM"
+
+        # Renderizar la página de resultados con la predicción
+        return render_template('index.html', prediction=resultado)
+
+if __name__ == '__main__':
+    # En PythonAnywhere no es necesario especificar el puerto.
+    app.run()
+-----------------------------------------------------------------
+2: PARA DETECTAR ALGUN CORREO SPAM.
+
+from flask import Flask, render_template, request
+import os
+import pickle
+from tensorflow.keras.models import load_model
+
+app = Flask(__name__)
+
+# Definir el directorio de los archivos guardados
+SAVE_DIR = '/home/danijari1/models/'  # Asegúrate de que este sea el path correcto
+# Cargar el vectorizador
+try:
+    vectorizer_path = os.path.join(SAVE_DIR, 'nombre.pkl')
+    with open(vectorizer_path, 'rb') as file:
+        vectorizer = pickle.load(file)
+except FileNotFoundError:
+    raise FileNotFoundError(f"El archivo nombre.pkl no fue encontrado en: {vectorizer_path}")
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if request.method == 'POST':
+        # Obtener el correo ingresado por el usuario desde el formulario
+        correo = request.form['correo']
+
+        # Verificar si el correo está vacío
+        if not correo:
+            resultado = "Por favor, ingrese un correo electrónico."
+            return render_template('index.html', prediction=resultado)
+
+        try:
+            # Convertir el texto del correo a la representación numérica usando el vectorizador
+            email_vector = vectorizer.transform([correo]).toarray()
+
+            # Cargar el modelo guardado (.h5)
+            model_path = os.path.join(SAVE_DIR, 'nombre.h5')
+            model = load_model(model_path)
+
+            # Realizar predicción con el modelo cargado
+            prediccion = model.predict(email_vector)
+
+            # Interpretar el resultado
+            resultado = "El correo es SPAM" if prediccion[0][0] >= 0.5 else "El correo NO es SPAM"
+        except Exception as e:
+            resultado = f"Ocurrió un error durante la predicción: {str(e)}"
+
+        # Renderizar la página de resultados con la predicción
+        return render_template('index.html', prediction=resultado)
+
+if __name__ == '__main__':
+    app.run(debug=True)  # Cambia a False en producción
+-----------------------------------------------------------------
+3: PARA DETECTAR ALGUN LINK MALISIOSO.
+from flask import Flask, render_template, request
+import os
+import pickle
+import numpy as np
+from tensorflow.keras.models import load_model
+
+app = Flask(__name__)
+
+# Definir el directorio de los archivos guardados
+SAVE_DIR = '/home/danijari1/models/'  # Asegúrate de que este sea el path correcto
+# Verificar si el vectorizador existe
+vectorizer_path = os.path.join(SAVE_DIR, 'link.pkl')
+if not os.path.exists(vectorizer_path):
+    raise FileNotFoundError(f"El archivo link.pkl no fue encontrado en: {vectorizer_path}")
+
+# Cargar el vectorizador desde el archivo .pkl
+with open(vectorizer_path, 'rb') as file:
+    vectorizer = pickle.load(file)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if request.method == 'POST':
+        # Obtener el enlace ingresado por el usuario desde el formulario
+        link = request.form['link']
+
+        # Convertir el enlace a TF-IDF utilizando el vectorizador cargado
+        X_nuevo_tfidf = vectorizer.transform([link]).toarray()
+
+        # Cargar el modelo solo cuando se realiza una predicción
+        model_path = os.path.join(SAVE_DIR, 'link.h5')
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"El archivo link.h5 no fue encontrado en: {model_path}")
+        
+        # Cargar el modelo guardado (.h5)
+        model = load_model(model_path)
+
+        # Realizar predicción con el modelo cargado
+        prediccion = model.predict(X_nuevo_tfidf)
+
+        # Interpretar el resultado
+        if prediccion[0][0] >= 0.5:
+            resultado = "El enlace es MALICIOSO"
+        else:
+            resultado = "El enlace NO es malicioso"
+
+        # Renderizar la página de resultados con la predicción
+        return render_template('index.html', prediction=resultado)
+
+if __name__ == '__main__':
+    # En PythonAnywhere no es necesario especificar el puerto.
+    app.run()
